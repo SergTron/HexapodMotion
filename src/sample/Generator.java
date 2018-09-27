@@ -8,26 +8,36 @@ public class Generator {
     // in 2 subCycle x - up, z - down;
     // in 3 subCycle x - down, z - down;
     // in 4 subCycle x - down, z - up;
-    int subCycleNumber = 1;
-    float iterationStep = 0.002f;
+    private  int subCycleNumber = 1;
+    private float iterationStep = 0.002f;
+    //TODO Create possibility to change iteration step value
 
-    double LimiterMaxX = 10.0;
-    double LimiterMinX = -10.0;
-    double LimiterMaxZ = -116.0;
-    double LimiterMinZ = -127.0;
+    double limiterMaxX = 10.0;
+    double limiterMinX = -10.0;
+    double limiterMaxZ = -116.0;
+    double limiterMinZ = -127.0;
+    int multiplierX = 1;
+    int multiplierZ = 1;
 
     Generator(){
         cartesianCoordinates.x = 0;
         cartesianCoordinates.y = 86.5;
-        cartesianCoordinates.z = 0;
+        cartesianCoordinates.z = -121.7;
     }
 
-
-    public CartesianCoordinates setCoordinates() {
-        if
-      cartesianCoordinates.x += iterationStep;
+    public CartesianCoordinates getCoordinates() {
+      updateMultipliers();
+      cartesianCoordinates.x = cartesianCoordinates.x + (iterationStep * multiplierX);
       cartesianCoordinates.y = 86.5;
-      cartesianCoordinates.z += iterationStep ;
+      cartesianCoordinates.z = cartesianCoordinates.z + (iterationStep * multiplierZ);
         return cartesianCoordinates;
     }
+
+    private  void updateMultipliers() {
+    if (cartesianCoordinates.x >= limiterMaxX) multiplierX = -1;
+    else if (cartesianCoordinates.x <= limiterMinX) multiplierX = 1;
+    if (cartesianCoordinates.z >= limiterMaxZ) multiplierZ = -1;
+    else if (cartesianCoordinates.z <= limiterMinZ) multiplierZ = 1;
+    }
+
 }
