@@ -1,7 +1,7 @@
 package sample;
 
-public class NormalCoordinates {
-    public double angle1;
-    public double angle2;
-    public double angle3;
+ class NormalCoordinates {
+     double angle1;
+     double angle2;
+     double angle3;
     }

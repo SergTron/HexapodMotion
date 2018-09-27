@@ -1,9 +1,9 @@
 package sample;
 
-public class Controller {
+ class Controller {
 
-    public void startSimulation() {
-        int i=0;
+     void startSimulation() {
+        int i = 0;
 
         Generator generator = new Generator();
         Calculator calculator = new Calculator();
