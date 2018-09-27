@@ -7,11 +7,11 @@ public class Controller {
 
         Generator generator = new Generator();
         Calculator calculator = new Calculator();
-        while (i <= 5){
-            CartesianCoordinates cartesianCoordinates = new CartesianCoordinates();
-            NormalCoordinates normalCoordinates = new NormalCoordinates();
+        CartesianCoordinates cartesianCoordinates = new CartesianCoordinates();
+        NormalCoordinates normalCoordinates = new NormalCoordinates();
 
-            cartesianCoordinates = generator.createCoordinates(cartesianCoordinates,i);
+        while (i <= 30){
+            cartesianCoordinates = generator.getCoordinates();
             System.out.println("x="+cartesianCoordinates.x +" y="+ cartesianCoordinates.y +" z="+ cartesianCoordinates.z);
 
             normalCoordinates = calculator.calculate(cartesianCoordinates);

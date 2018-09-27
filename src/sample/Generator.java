@@ -9,27 +9,33 @@ public class Generator {
     // in 3 subCycle x - down, z - down;
     // in 4 subCycle x - down, z - up;
     private  int subCycleNumber = 1;
-    private float iterationStep = 0.002f;
-    //TODO Create possibility to change iteration step value
+    private float iterationStep = 1.00f;
+    //TODO Create possibility to change iteration step value by user
 
     double limiterMaxX = 10.0;
     double limiterMinX = -10.0;
     double limiterMaxZ = -116.0;
-    double limiterMinZ = -127.0;
+    double limiterMinZ = -126.0;
+    //TODO Create possibility to change limiters by user
+
     int multiplierX = 1;
     int multiplierZ = 1;
 
     Generator(){
         cartesianCoordinates.x = 0;
         cartesianCoordinates.y = 86.5;
-        cartesianCoordinates.z = -121.7;
+        cartesianCoordinates.z = -121;
     }
 
+    //Basically x get it Limiter two times slower that Z
+    // x should get from 0 to 10 (10 steps with iterationStep = 1 .
+    // In the same time Z should get from -121 to -116 (5 steps with iterationStep = 1)
+    //this why for Z coordinate iterationStep are divided by 2 in calculations;
     public CartesianCoordinates getCoordinates() {
-      updateMultipliers();
       cartesianCoordinates.x = cartesianCoordinates.x + (iterationStep * multiplierX);
-      cartesianCoordinates.y = 86.5;
-      cartesianCoordinates.z = cartesianCoordinates.z + (iterationStep * multiplierZ);
+        cartesianCoordinates.y = 86.5;
+        cartesianCoordinates.z = cartesianCoordinates.z + (iterationStep/2 * multiplierZ);
+        updateMultipliers();
         return cartesianCoordinates;
     }
 
