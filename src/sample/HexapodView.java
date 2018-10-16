@@ -112,7 +112,8 @@ public class HexapodView extends Application {
         launch(args);
            }
 
-
+           //JavaFx isn't able to draw Line3D based on coordinates x1,y1,z1 and x2,y2,z2
+           // this function is realising this functionality
     public Cylinder createConnection(Point3D origin, Point3D target) {
         Point3D yAxis = new Point3D(0, 1, 0);
         Point3D diff = target.subtract(origin);
@@ -124,7 +125,6 @@ public class HexapodView extends Application {
         Point3D axisOfRotation = diff.crossProduct(yAxis);
         double angle = Math.acos(diff.normalize().dotProduct(yAxis));
         Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
-
 
         Cylinder line = new Cylinder(5, height);
 

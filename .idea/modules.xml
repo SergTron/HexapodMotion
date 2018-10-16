@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HexapodSimulator.iml" filepath="$PROJECT_DIR$/HexapodSimulator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HexapodMotion.iml" filepath="$PROJECT_DIR$/HexapodMotion.iml" />
     </modules>
   </component>
 </project>
