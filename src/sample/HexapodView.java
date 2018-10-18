@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -113,15 +114,37 @@ public class HexapodView extends Application {
 
         //Functions block
         //Creating stop button
-        playButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent event) {
-             Controller controller = new Controller();
-             try {
-                 controller.startSimulation();
-             }
-             catch (Exception e){};
-        }
-        }));
+//        playButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
+//            public void handle(MouseEvent event) {
+//             Controller controller = new Controller();
+//             try {
+//                 controller.startSimulation();
+//             }
+//             catch (Exception e){};
+//        }
+//        }));
+
+        playButton.setOnAction(event -> {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                public Void call() throws Exception {
+                  Controller controller = new Controller();
+
+                    for (int i=1; i<=10; i++) {
+                        controller.startSimulation();
+                        Thread.sleep(250);
+                    }
+                    return null ;
+                }
+            };
+           // task.messageProperty().addListener((obs, oldMessage, newMessage) -> label.setText(newMessage));
+            new Thread(task).start();
+        });
+
+
+
+
+
 
     }
 
