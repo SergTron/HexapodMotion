@@ -3,18 +3,12 @@ package sample;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -35,6 +29,7 @@ public class HexapodView extends Application {
 
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
+    Controller controller = new Controller();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -118,7 +113,7 @@ public class HexapodView extends Application {
 //            public void handle(MouseEvent event) {
 //             Controller controller = new Controller();
 //             try {
-//                 controller.startSimulation();
+//                 controller.getNewCoordinates();
 //             }
 //             catch (Exception e){};
 //        }
@@ -128,11 +123,14 @@ public class HexapodView extends Application {
             Task<Void> task = new Task<Void>() {
                 @Override
                 public Void call() throws Exception {
-                  Controller controller = new Controller();
-
-                    for (int i=1; i<=10; i++) {
-                        controller.startSimulation();
+                    controller.setStatus(true);
+                    for (int i=1; i<=100; i++) {
+                        //Rules to continue
+                        // Coordinates c  = controller.calculateCoordinate();
+                        //
+                       CartesianCoordinates cord = controller.getNewCoordinates();
                         Thread.sleep(250);
+                        if (!controller.getStatus()) break;
                     }
                     return null ;
                 }
@@ -140,11 +138,9 @@ public class HexapodView extends Application {
            // task.messageProperty().addListener((obs, oldMessage, newMessage) -> label.setText(newMessage));
             new Thread(task).start();
         });
-
-
-
-
-
+        stopButton.setOnAction(event -> {
+            controller.stopSimulation();
+         });
 
     }
 
@@ -196,4 +192,6 @@ public class HexapodView extends Application {
 
         return line;
     }
+
+
 }
