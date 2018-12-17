@@ -3,11 +3,12 @@ package sample;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -28,9 +29,11 @@ public class HexapodView extends Application {
 
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
+    Controller controller = new Controller();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //Creating Left legs
         Cylinder legL11 = createConnection(new Point3D(70,0,-50),new Point3D(70,-30,-100));
         Cylinder legL12 = createConnection(new Point3D(70,-30,-100),new Point3D(70,80,-100));
 
@@ -40,6 +43,7 @@ public class HexapodView extends Application {
         Cylinder legL31 = createConnection(new Point3D(-70,0,-50),new Point3D(-70,-30,-100));
         Cylinder legL32 = createConnection(new Point3D(-70,-30,-100),new Point3D(-70,80,-100));
 
+        //Creating Right Legs
         Cylinder legR11 = createConnection(new Point3D(70,0,50),new Point3D(70,-30,100));
         Cylinder legR12 = createConnection(new Point3D(70,-30,100),new Point3D(70,80,100));
 
@@ -49,6 +53,8 @@ public class HexapodView extends Application {
         Cylinder legR31 = createConnection(new Point3D(-70,0,50),new Point3D(-70,-30,100));
         Cylinder legR32 = createConnection(new Point3D(-70,-30,100),new Point3D(-70,80,100));
 
+
+        //Creating Robot Base construct
         Box box = new Box(210,30,100);
         box.setTranslateX(0);
         box.setTranslateY(0);
@@ -59,10 +65,29 @@ public class HexapodView extends Application {
         redMaterial.setDiffuseColor(Color.RED);
         box.setMaterial(redMaterial);
 
-        Group group = new Group();
-        group.getChildren().addAll(box,
+
+        //Creating play button
+        Button playButton = new Button("Play");
+        playButton.setLayoutX(300);
+        playButton.setLayoutY(250);
+
+        //Creating stop button
+        Button stopButton = new Button("Stop");
+        stopButton.setLayoutX(250);
+        stopButton.setLayoutY(250);
+
+
+
+        Group mainGroup = new Group();
+        Group groupRobot = new Group();
+        groupRobot.getChildren().addAll(box,
                 legL11,legL12,legL21,legL22,legL31,legL32,
                 legR11,legR12,legR21,legR22,legR31,legR32);
+
+        Group groupButoon = new Group();
+        groupButoon.getChildren().addAll(playButton, stopButton);
+
+        mainGroup.getChildren().addAll(groupRobot,groupButoon);
 
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-1300);
@@ -71,17 +96,51 @@ public class HexapodView extends Application {
         camera.setFarClip(3000);
 
 
-
-        Scene scene = new Scene(group, WIDTH, HEIGHT,true);
+        Scene scene = new Scene(mainGroup, WIDTH, HEIGHT,true);
         scene.setFill(Color.AZURE);
         scene.setCamera(camera);
 
-        initMouseControl(group,scene);
+        initMouseControl(groupRobot,scene);
 
         primaryStage.setTitle("Hexapod Robot 3D");
         primaryStage.setScene(scene);
         primaryStage.show();
 
+
+        //Functions block
+        //Creating stop button
+//        playButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
+//            public void handle(MouseEvent event) {
+//             Controller controller = new Controller();
+//             try {
+//                 controller.getNewCoordinates();
+//             }
+//             catch (Exception e){};
+//        }
+//        }));
+
+        playButton.setOnAction(event -> {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    controller.setStatus(true);
+                    for (int i=1; i<=100; i++) {
+                        //Rules to continue
+                        // Coordinates c  = controller.calculateCoordinate();
+                        //
+                       CartesianCoordinates cord = controller.getNewCoordinates();
+                        Thread.sleep(250);
+                        if (!controller.getStatus()) break;
+                    }
+                    return null ;
+                }
+            };
+           // task.messageProperty().addListener((obs, oldMessage, newMessage) -> label.setText(newMessage));
+            new Thread(task).start();
+        });
+        stopButton.setOnAction(event -> {
+            controller.stopSimulation();
+         });
 
     }
 
@@ -110,9 +169,11 @@ public class HexapodView extends Application {
     }
     public static void main(String[] args) {
         launch(args);
+
            }
 
-
+           //JavaFx isn't able to draw Line3D based on coordinates x1,y1,z1 and x2,y2,z2
+           // this function is realising this functionality
     public Cylinder createConnection(Point3D origin, Point3D target) {
         Point3D yAxis = new Point3D(0, 1, 0);
         Point3D diff = target.subtract(origin);
@@ -125,11 +186,12 @@ public class HexapodView extends Application {
         double angle = Math.acos(diff.normalize().dotProduct(yAxis));
         Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
 
-
         Cylinder line = new Cylinder(5, height);
 
         line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
         return line;
     }
+
+
 }
