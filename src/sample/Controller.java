@@ -1,7 +1,7 @@
 package sample;
 
  class Controller {
-     private static boolean robotActive = false;
+     private static boolean robotActive = false; //main flag which relate to buttons in user interface
      Generator generator = new Generator();
      Calculator calculator = new Calculator();
      Controller(){
@@ -13,52 +13,46 @@ package sample;
      CartesianCoordinates getNewCoordinates() throws InterruptedException {
 
         int i = 0;
-
-
         CartesianCoordinates cartesianCoordinates = new CartesianCoordinates();
         NormalCoordinates normalCoordinates = new NormalCoordinates();
 
          if (robotActive ==true) {
              cartesianCoordinates = generator.getCoordinates();
              System.out.println("x=" + cartesianCoordinates.x + " y=" + cartesianCoordinates.y + " z=" + cartesianCoordinates.z);
-//
-//             normalCoordinates = calculator.calculate(cartesianCoordinates);
-//             System.out.println("angle1=" + normalCoordinates.angle1 * 180 / Math.PI + " angle2=" + normalCoordinates.angle2 * 180 / Math.PI + " angle3=" + normalCoordinates.angle3 * 180 / Math.PI);
          }
+
          return cartesianCoordinates;
 
      }
 
 
-     //TODO
-//     CartesianCoordinates getNewCoordinatesWithAngles() throws InterruptedException {
-//         if (robotActive == false) robotActive = true;
-//        int i = 0;
-//
-//        Generator generator = new Generator();
-//        Calculator calculator = new Calculator();
-//        CartesianCoordinates cartesianCoordinates = new CartesianCoordinates();
-//        NormalCoordinates normalCoordinates = new NormalCoordinates();
-//
-//         if (robotActive ==true) {
-//             cartesianCoordinates = generator.getCoordinates();
-//             System.out.println("x=" + cartesianCoordinates.x + " y=" + cartesianCoordinates.y + " z=" + cartesianCoordinates.z);
-//
-//             normalCoordinates = calculator.calculate(cartesianCoordinates);
-//             System.out.println("angle1=" + normalCoordinates.angle1 * 180 / Math.PI + " angle2=" + normalCoordinates.angle2 * 180 / Math.PI + " angle3=" + normalCoordinates.angle3 * 180 / Math.PI);
-//         }
-//         return cartesianCoordinates;
-//
-//     }
+     NormalCoordinates getNewCoordinatesAngle() throws InterruptedException {
 
-    void stopSimulation(){
-         robotActive = false;
-    }
+         int i = 0;
+         CartesianCoordinates cartesianCoordinates = new CartesianCoordinates();
+         NormalCoordinates normalCoordinates = new NormalCoordinates();
+         NormalCoordinates normalCoordinatesDeg = new NormalCoordinates();
+
+         if (robotActive ==true) {
+             cartesianCoordinates = generator.getCoordinates();
+             normalCoordinates = calculator.calculate(cartesianCoordinates);
+             normalCoordinatesDeg = calculator.calculateDeg(cartesianCoordinates);
+
+         }
+
+         return normalCoordinates;
+
+     }
+
 
     Boolean getStatus() {
          return robotActive;
     }
-    void setStatus(Boolean status){
+    void setStatus(Boolean status) {
          robotActive = status;
     }
+     void stopSimulation() {
+         robotActive = false;
+     }
+
 }
