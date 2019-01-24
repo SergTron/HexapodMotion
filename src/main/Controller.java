@@ -1,13 +1,9 @@
-package sample;
+package main;
 
  class Controller {
      private static boolean robotActive = false; //main flag which relate to buttons in user interface
      Generator generator = new Generator();
      Calculator calculator = new Calculator();
-     Controller(){
-         robotActive = true;
-
-     }
 
      //Simple way to getCoordinates
      CartesianCoordinates getNewCoordinates() throws InterruptedException {

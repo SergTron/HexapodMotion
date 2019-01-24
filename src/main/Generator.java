@@ -1,4 +1,4 @@
-package sample;
+package main;
 
 // One oslculation cycle (whole circle) has 4 sub-cycles
 // each of them describes x and z coordinates increasing and decreasing:

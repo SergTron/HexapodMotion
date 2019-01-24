@@ -1,4 +1,4 @@
-package sample;
+package main;
 
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
@@ -13,18 +13,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
-
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
-public class HexapodView extends Application {
+public class Main extends Application {
 
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
     private double anchorX;
     private double anchorY;
 
+    //Start and end points3D for each leg
     private Point3D pointL11Start = new Point3D(70,0,-50);
     private Point3D pointL11End = new Point3D(70,-30,-100);
     private Point3D pointL12Start = new Point3D(70,-30,-100);
@@ -77,32 +77,39 @@ public class HexapodView extends Application {
     Rotate motionRLegR31 = new Rotate(0, pointR31End.subtract(pointR31Start));
 
     Translate motionTLegL11 = new Translate();
-  //  Translate motionTLegL12 = new Translate();
+
     Translate motionTLegL21 = new Translate();
-   // Translate motionTLegL22 = new Translate();
+
     Translate motionTLegL31 = new Translate();
-   // Translate motionTLegL32 = new Translate();
+
     Translate motionTLegR11 = new Translate();
-   // Translate motionTLegR12 = new Translate();
+
     Translate motionTLegR21 = new Translate();
-   // Translate motionTLegR22 = new Translate();
+
     Translate motionTLegR31 = new Translate();
-   // Translate motionTLegR32 = new Translate();
+
 
 
     Group groupBox = new Group();
+
     Group groupLegs1 = new Group();
+
     Group groupLegs2 = new Group();
+
     Group groupRobot = new Group();
+
     Group groupButoon = new Group();
+
     Group mainGroup = new Group();
+
+    //Anchors and Double Properties are used to implement camera rotation
     private double anchorAngleX = 0;
     private double anchorAngleY = 0;
 
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
 
-    Controller controller = new Controller();
+    Controller controller = new Controller(); //robotActive = false
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -135,6 +142,29 @@ public class HexapodView extends Application {
         final PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setSpecularColor(Color.ORANGE);
         redMaterial.setDiffuseColor(Color.RED);
+
+        final PhongMaterial greenMaterial = new PhongMaterial();
+        greenMaterial.setSpecularColor(Color.CYAN);
+        greenMaterial.setDiffuseColor(Color.GREEN);
+
+        final PhongMaterial cyanMaterial = new PhongMaterial();
+        cyanMaterial.setSpecularColor(Color.CYAN);
+        cyanMaterial.setDiffuseColor(Color.DARKCYAN);
+
+        legL11.setMaterial(greenMaterial);
+        legL21.setMaterial(greenMaterial);
+        legL31.setMaterial(greenMaterial);
+        legR11.setMaterial(greenMaterial);
+        legR21.setMaterial(greenMaterial);
+        legR31.setMaterial(greenMaterial);
+
+        legL12.setMaterial(cyanMaterial);
+        legL22.setMaterial(cyanMaterial);
+        legL32.setMaterial(cyanMaterial);
+        legR12.setMaterial(cyanMaterial);
+        legR22.setMaterial(cyanMaterial);
+        legR32.setMaterial(cyanMaterial);
+
         box.setMaterial(redMaterial);
 
 
@@ -194,14 +224,15 @@ public class HexapodView extends Application {
             Task<Void> task = new Task<Void>() {
                 @Override
                 public Void call() throws Exception {
+                    //Check robotActive status [Handle multiple click on Play button]
+                    if (!controller.getStatus()) controller.setStatus(true);
+                    else return null;
 
-                    controller.setStatus(true);
                     //Rules to continue
                     // Coordinates c  = controller.calculateCoordinate();
                     NormalCoordinates coord = controller.getNewCoordinatesAngle();
-                    System.out.println(coord.angle1);
+             //     System.out.println(coord.angle1);
 
-                    //New logic
                     //Step 1
                     //Step 1 Group1
                     motionRLegL11.angleProperty().set(motionRLegL11.angleProperty().getValue()+30);
@@ -265,7 +296,6 @@ public class HexapodView extends Application {
                     legL22.setTranslateY(legL22.getTranslateY() + 3);
                     legL22.setTranslateZ(legL22.getTranslateZ() + 6);
 
-
                     motionRLegR31.angleProperty().set(motionRLegR31.angleProperty().getValue()-30);
                     legR31.setTranslateX(legR31.getTranslateX() + 13);
                     legR31.setTranslateY(legR31.getTranslateY() + 5);
@@ -274,12 +304,13 @@ public class HexapodView extends Application {
                     legR32.setTranslateY(legR32.getTranslateY() + 3);
                     legR32.setTranslateZ(legR32.getTranslateZ() - 5);
                     Thread.sleep(2000);
-                    int counter = 2;
-                    // while (!controller.getStatus()) {
-                    while (controller.getStatus()) {
-                        //Step 2,4,6....
 
-                        if (counter % 2 == 0) {
+                    int counter = 3;
+
+                    while (controller.getStatus()) {
+                        //Step 3,5,7....
+
+                        if (counter % 2 != 0) {
                             //Group 1
                             motionRLegL11.angleProperty().set(motionRLegL11.angleProperty().getValue() + 60);
                             legL11.setTranslateX(legL11.getTranslateX() + 26);
@@ -338,7 +369,6 @@ public class HexapodView extends Application {
                             Thread.sleep(2000);
                         }
                     }
-
                     resetCoordinates();
                     return null;
                 }
@@ -351,6 +381,8 @@ public class HexapodView extends Application {
          });
     }
 
+
+    //Camera rotation in 3D environment
     private void initMouseControl(Group group, Scene scene) {
         Rotate xRotate;
         Rotate yRotate;
@@ -376,6 +408,7 @@ public class HexapodView extends Application {
         });
     }
 
+    //It isn't
     void resetCoordinates(){
         motionRLegL11.angleProperty().set(0);
         motionRLegL21.angleProperty().set(0);
@@ -383,6 +416,7 @@ public class HexapodView extends Application {
         motionRLegR11.angleProperty().set(0);
         motionRLegR21.angleProperty().set(0);
         motionRLegR31.angleProperty().set(0);
+
         legL11.setTranslateX(pointL11End.getX()-pointL11Start.getX());
         legL12.setTranslateX(pointL12End.getX()-pointL12Start.getX());
         legL21.setTranslateX(pointL21End.getX()-pointL21Start.getX());
@@ -396,12 +430,21 @@ public class HexapodView extends Application {
         legR31.setTranslateX(pointR31End.getX()-pointR31Start.getX());
         legR32.setTranslateX(pointR32End.getX()-pointR32Start.getX());
 
+        legL12.setHeight(legL12.getHeight() +7);
+        legL22.setHeight(legL22.getHeight() +7);
+        legL32.setHeight(legL32.getHeight() +7);
+        legR12.setHeight(legR12.getHeight() +7);
+        legR22.setHeight(legR22.getHeight() +7);
+        legR32.setHeight(legR32.getHeight() +7);
+
     }
+
     public static void main(String[] args) {
         launch(args);
            }
            //JavaFx isn't able to draw Line3D based on coordinates x1,y1,z1 and x2,y2,z2
            // this function is realising this functionality
+
     private Cylinder createConnection(Point3D origin, Point3D target) {
         Point3D yAxis = new Point3D(0, 1, 0);
         Point3D diff = target.subtract(origin);
@@ -420,6 +463,4 @@ public class HexapodView extends Application {
 
         return line;
     }
-
-
 }

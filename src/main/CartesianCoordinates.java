@@ -1,4 +1,4 @@
-package sample;
+package main;
 
  class CartesianCoordinates {
     double x;
